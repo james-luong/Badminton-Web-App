@@ -1,0 +1,86 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int            @id @default(autoincrement())
+  name           String
+  email          String         @unique
+  phone          String?
+  passwordHash   String
+  role           Role           @default(PLAYER)
+  createdAt      DateTime       @default(now())
+  sessionsHosted Session[]      @relation("HostedSessions")
+  registrations  Registration[]
+}
+
+enum Role {
+  PLAYER
+  ADMIN
+}
+
+model Session {
+  id            Int               @id @default(autoincrement())
+  title         String
+  location      String
+  startTime     DateTime
+  endTime       DateTime
+  capacity      Int
+  costPerPerson Decimal           @db.Decimal(6, 2)
+  status        SessionStatus     @default(OPEN)
+  hostId        Int
+  host          User              @relation("HostedSessions", fields: [hostId], references: [id])
+  createdAt     DateTime          @default(now())
+  registrations Registration[]
+  notifications NotificationLog[]
+}
+
+enum SessionStatus {
+  OPEN
+  FULL
+  CANCELLED
+  COMPLETED
+}
+
+model Registration {
+  id               Int                @id @default(autoincrement())
+  sessionId        Int
+  session          Session            @relation(fields: [sessionId], references: [id])
+  userId           Int
+  user             User               @relation(fields: [userId], references: [id])
+  status           RegistrationStatus @default(CONFIRMED)
+  waitlistPosition Int?
+  registeredAt     DateTime           @default(now())
+  cancelledAt      DateTime?
+
+  @@unique([sessionId, userId])
+}
+
+enum RegistrationStatus {
+  CONFIRMED
+  WAITLISTED
+  CANCELLED
+}
+
+model NotificationLog {
+  id        Int              @id @default(autoincrement())
+  sessionId Int
+  session   Session          @relation(fields: [sessionId], references: [id])
+  userId    Int
+  type      NotificationType
+  channel   String           @default("whatsapp")
+  sentAt    DateTime         @default(now())
+}
+
+enum NotificationType {
+  CONFIRMATION
+  REMINDER
+  WAITLIST_PROMOTED
+  CANCELLATION
+}
