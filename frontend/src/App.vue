@@ -1,7 +1,12 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+import { RouterLink, RouterView } from 'vue-router'
 </script>
 
 <template>
-  <HelloWorld />
+  <nav>
+    <RouterLink to="/">Sessions</RouterLink>
+    <RouterLink to="/my-registrations">My registrations</RouterLink>
+    <RouterLink to="/login">Login</RouterLink>
+  </nav>
+  <RouterView />
 </template>
