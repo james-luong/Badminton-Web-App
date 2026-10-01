@@ -27,6 +27,20 @@ router.post('/', requireAuth, requireAdmin, async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
+router.get('/:id', async (req, res, next) => {
+  try {
+    const session = await prisma.session.findUnique({
+      where: { id: Number(req.params.id) },
+      include: {
+        registrations: true,
+        _count: { select: { registrations: { where: { status: 'CONFIRMED' } } } }
+      }
+    })
+    if (!session) return res.status(404).json({ error: 'Session not found' })
+    res.json(session)
+  } catch (err) { next(err) }
+})
+
 router.patch('/:id', requireAuth, requireAdmin, async (req, res, next) => {
   try {
     const session = await prisma.session.update({ where: { id: Number(req.params.id) }, data: req.body })
