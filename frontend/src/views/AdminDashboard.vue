@@ -14,13 +14,27 @@ async function cancelSession(id) {
 </script>
 
 <template>
-  <h1>Manage sessions</h1>
-  <RouterLink to="/admin/sessions/new">+ New session</RouterLink>
-  <table>
-    <tr v-for="s in sessions.sessions" :key="s.id">
-      <td>{{ s.title }}</td>
-      <td>{{ s._count.registrations }} / {{ s.capacity }}</td>
-      <td><button @click="cancelSession(s.id)">Cancel</button></td>
-    </tr>
-  </table>
+  <div class="container">
+    <div class="page-header">
+      <h1>Manage sessions</h1>
+      <RouterLink to="/admin/sessions/new" class="btn btn-primary">+ New session</RouterLink>
+    </div>
+    <table v-if="sessions.sessions.length">
+      <thead>
+        <tr>
+          <th>Session</th>
+          <th>Registered</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="s in sessions.sessions" :key="s.id">
+          <td>{{ s.title }}</td>
+          <td>{{ s._count.registrations }} / {{ s.capacity }}</td>
+          <td><button class="btn btn-danger" @click="cancelSession(s.id)">Cancel</button></td>
+        </tr>
+      </tbody>
+    </table>
+    <p v-else class="empty-state">No sessions yet — create one to get started.</p>
+  </div>
 </template>

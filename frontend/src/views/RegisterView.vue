@@ -1,3 +1,4 @@
+<!-- src/views/RegisterView.vue -->
 <script setup>
 import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
@@ -26,12 +27,30 @@ async function submit() {
 </script>
 
 <template>
-  <form @submit.prevent="submit">
-    <input v-model="form.name" type="text" placeholder="Name" required />
-    <input v-model="form.email" type="email" placeholder="Email" required />
-    <input v-model="form.phone" type="tel" placeholder="Phone" />
-    <input v-model="form.password" type="password" placeholder="Password" required />
-    <button type="submit">Register</button>
-    <p v-if="error.message">{{ error.message }}</p>
-  </form>
+  <div class="container">
+    <div class="card form-card">
+      <h1>Create your account</h1>
+      <form @submit.prevent="submit">
+        <div class="field">
+          <label for="name">Name</label>
+          <input id="name" v-model="form.name" type="text" placeholder="Jane Smith" required />
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" v-model="form.email" type="email" placeholder="you@example.com" required />
+        </div>
+        <div class="field">
+          <label for="phone">Phone</label>
+          <input id="phone" v-model="form.phone" type="tel" placeholder="Optional" />
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" v-model="form.password" type="password" placeholder="••••••••" required />
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Register</button>
+        <p v-if="error.message" class="form-error">{{ error.message }}</p>
+      </form>
+      <p class="form-footer">Already have an account? <RouterLink to="/login">Log in</RouterLink></p>
+    </div>
+  </div>
 </template>
